@@ -247,7 +247,6 @@ namespace RuneSharp.RunePackage
                 char[] tld = new char[br.ReadByte()];
                 for (int charID = 0; charID < tld.Length; charID++)
                     tld[charID] = (char)br.ReadByte();
-
                 tldList.Add(tld);
             }
             string[] s = new string[tldList.Count];

@@ -11,7 +11,7 @@ namespace RuneSharp.RunePackage
     public class ConfigParser
     {
         //Parses flo.dat from config.jag
-        //TODO: FIX THIS
+        //Yup it's fixed
         public static FloorConfig[] ParseFloorConfig(byte[] floorData)
         {
             int floorCount;
