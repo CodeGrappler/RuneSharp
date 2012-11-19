@@ -16,7 +16,8 @@ namespace RuneSharp.RunePackage
         public static bool aBoolean323 = true;
         public static int anInt324;
         public static int anInt330;
-        public static int anInt331; 
+        public static int anInt331;
+        public static int anInt1406 = 0;
         public static void ParseSounds(int flag, byte[] data)
         {
             byte[] sampleData = new byte[441000]; //aByteArray327
@@ -39,7 +40,7 @@ namespace RuneSharp.RunePackage
                     int j = dataReader.ReadByte();
                     if (j != 0)
                     {
-                        sounds[soundID].anInt1406 -= 1;
+                        anInt1406 -= 1;
                         //method169 - gets true and stream reader
                         //creates a class29 which it sends the same
                         sounds[soundID].anInt540 = dataReader.ReadByte();
@@ -69,7 +70,7 @@ namespace RuneSharp.RunePackage
                         int uFlag = dataReader.ReadByte();
                         if (uFlag != 0)
                         {
-                            sounds[soundID].anInt1406 -= 1; //I don't think this is supposed to be in the sound class
+                            anInt1406 -= 1; //I don't think this is supposed to be in the sound class
                         }
                     }
                 }
@@ -99,7 +100,6 @@ namespace RuneSharp.RunePackage
         public bool aBoolean1403;
         public bool aBoolean1404;
         public byte[] sampleData; //aByteArray1405
-        public int anInt1406;
         public int anInt1407;
         public bool aBoolean97;
         public int[] anIntArray106;
@@ -132,7 +132,6 @@ namespace RuneSharp.RunePackage
             this.anInt1402 = -373;
             this.aBoolean1403 = false;
             this.aBoolean1404 = true;
-            this.anInt1406 = 0;
             this.aBoolean97 = true;
             this.anIntArray106 = new int[5];
             this.anIntArray107 = new int[5];

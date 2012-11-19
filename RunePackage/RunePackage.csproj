@@ -64,10 +64,12 @@
     <Compile Include="ImageArchive.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="BZip2\PathFilter.cs" />
+    <Compile Include="MidiParser.cs" />
     <Compile Include="ModelParser.cs" />
     <Compile Include="OBJExporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RSFont.cs" />
+    <Compile Include="SoundParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
