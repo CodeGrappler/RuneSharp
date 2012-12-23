@@ -59,6 +59,182 @@ namespace RuneSharp.RunePackage
             }
             return floors;
         }
+        public static ObjectConfig[] ParseObjectConfig(byte[] data, byte[] index)
+        {
+            BigEndianBinaryReader indexReader = new BigEndianBinaryReader(new MemoryStream(index));
+            BigEndianBinaryReader dataReader = new BigEndianBinaryReader(new MemoryStream(data));
+            ObjectConfig[] obj = new ObjectConfig[indexReader.ReadUInt16()];
+            int sIndex = 2;
+            int[] streamIndices = new int[obj.Length];
+            for (int i = 0; i < streamIndices.Length; i++)
+            {
+                streamIndices[i] = sIndex;
+                sIndex += indexReader.ReadUInt16();
+            }
+            for (int j = 0; j < obj.Length; j++)
+            {
+                if (obj[j] == null) obj[j] = new ObjectConfig();
+                dataReader.BaseStream.Position = streamIndices[j];
+                bool breakTop = false;
+                bool continueTop = false;
+                int t = 0;
+                do
+                {
+                    continueTop = false;
+                    int k;
+                    do
+                    {
+                        k = dataReader.ReadByte();
+                        if (k == 0)
+                            breakTop = true;
+                        else if (k == 1)
+                        {
+                            int l = dataReader.ReadByte();
+                            if (l > 0)
+                                if (obj[j].objectModelIDs == null)
+                                {
+                                    obj[j].types = new int[l];
+                                    obj[j].objectModelIDs = new int[l];
+                                    for (int k1 = 0; k1 < l; k1++)
+                                    {
+                                        obj[j].objectModelIDs[k1] = dataReader.ReadUInt16();
+                                        obj[j].types[k1] = dataReader.ReadByte();
+                                    }
+                                }
+                                else
+                                    dataReader.BaseStream.Position += l * 3;
+                        }
+                        else if (k == 2)
+                            obj[j].name = dataReader.ReadString();
+                        else if (k == 3)
+                            obj[j].description = dataReader.ReadString();
+                        else if (k == 5)
+                        {
+                            int l = dataReader.ReadByte();
+                            if (l > 0)
+                                if (obj[j].objectModelIDs == null)
+                                {
+                                    obj[j].types = null;
+                                    obj[j].objectModelIDs = new int[l];
+                                    for (int l1 = 0; l1 < l; l1++)
+                                        obj[j].objectModelIDs[l1] = dataReader.ReadUInt16();
+                                }
+                                else dataReader.BaseStream.Position += l * 2;
+                        }
+                        else if (k == 14)
+                            obj[j].sizeX = dataReader.ReadByte();
+                        else if (k == 15)
+                            obj[j].sizeY = dataReader.ReadByte();
+                        else if (k == 17)
+                            obj[j].isUnwalkable = false;
+                        else if (k == 18)
+                            obj[j].aBoolean757 = false;
+                        else if (k == 19)
+                        {
+                            t = dataReader.ReadByte();
+                            if (t == 1)
+                                obj[j].hasActions = true;
+                        }
+                        else if (k == 21)
+                            obj[j].adjustToTerrain = true;
+                        else if (k == 22)
+                            obj[j].nonFlatShading = true;
+                        else if (k == 23)
+                            obj[j].aBoolean764 = true;
+                        else if (k == 24)
+                        {
+                            obj[j].animationID = dataReader.ReadUInt16();
+                            if (obj[j].animationID == 65535) obj[j].animationID = -1;
+                        }
+                        else if (k == 28)
+                            obj[j].anInt775 = dataReader.ReadByte();
+                        else if (k == 29)
+                            obj[j].brightness = dataReader.ReadByte();
+                        else if (k == 39)
+                            obj[j].contrast = dataReader.ReadByte();
+                        else if (k >= 30 && k < 39)
+                        {
+                            if (obj[j].actions == null)
+                                obj[j].actions = new string[10];
+                            obj[j].actions[k - 30] = dataReader.ReadString();
+                            if (obj[j].actions[k - 30].ToLower() == "hidden")
+                                obj[j].actions[k - 30] = null;
+                        }
+                        else if (k == 40)
+                        {
+                            int i1 = dataReader.ReadByte();
+                            obj[j].modifiedModelColors = new int[i1];
+                            obj[j].originalModelColors = new int[i1];
+                            for (int i2 = 0; i2 < i1; i2++)
+                            {
+                                obj[j].modifiedModelColors[i2] = dataReader.ReadUInt16();
+                                obj[j].originalModelColors[i2] = dataReader.ReadUInt16();
+                            }
+                        }
+                        else if (k == 60)
+                            obj[j].mapFunctionID = dataReader.ReadUInt16();
+                        else if (k == 62)
+                            obj[j].aBoolean751 = true;
+                        else if (k == 64)
+                            obj[j].aBoolean779 = false;
+                        else if (k == 65)
+                            obj[j].modelSizeX = dataReader.ReadUInt16();
+                        else if (k == 66)
+                            obj[j].modelSizeH = dataReader.ReadUInt16();
+                        else if (k == 67)
+                            obj[j].modelSizeY = dataReader.ReadUInt16();
+                        else if (k == 68)
+                            obj[j].mapSceneID = dataReader.ReadUInt16();
+                        else if (k == 69)
+                            obj[j].anInt768 = dataReader.ReadByte();
+                        else if (k == 70)
+                            obj[j].offsetX = dataReader.ReadUInt16();
+                        else if (k == 71)
+                            obj[j].offsetH = dataReader.ReadUInt16();
+                        else if (k == 72)
+                            obj[j].offsetY = dataReader.ReadUInt16();
+                        else if (k == 73)
+                            obj[j].aBoolean736 = true;
+                        else if (k == 74)
+                            obj[j].isSolidObject = true;
+                        else
+                        {
+                            if (k != 75)
+                                continue;
+                            obj[j].anInt760 = dataReader.ReadByte();
+                        }
+                        continueTop = true;
+                    } while (k != 77 && !breakTop);
+                    if (breakTop) break;
+                    if (continueTop) continue;
+                    obj[j].configId_1 = dataReader.ReadUInt16();
+                    if (obj[j].configId_1 == 65535)
+                        obj[j].configId_1 = -1;
+                    obj[j].configId_1 = dataReader.ReadUInt16();
+                    if (obj[j].configID == 65535)
+                        obj[j].configID = -1;
+                    int j1 = dataReader.ReadByte();
+                    obj[j].configObjectIDs = new int[j1 + 1];
+                    for (int j2 = 0; j2 <= j1; j2++)
+                    {
+                        obj[j].configObjectIDs[j2] = dataReader.ReadUInt16();
+                        if (obj[j].configObjectIDs[j2] == 65535)
+                            obj[j].configObjectIDs[j2] = -1;
+                    }
+                } while (!breakTop);
+                if (t == -1)
+                {
+                    obj[j].hasActions = obj[j].objectModelIDs != null;
+                    if (obj[j].actions != null)
+                        obj[j].hasActions = true;
+                }
+                if (obj[j].isSolidObject)
+                    obj[j].isUnwalkable = obj[j].aBoolean757 = false;
+                if (obj[j].anInt760 == -1)
+                    obj[j].anInt760 = obj[j].isUnwalkable ? 1 : 0;
+            }
+            return obj;
+        }
         public static ItemConfig[] ParseItemConfig(byte[] data, byte[] index)
         {
             BigEndianBinaryReader dataReader = new BigEndianBinaryReader(new MemoryStream(data));
@@ -417,5 +593,45 @@ namespace RuneSharp.RunePackage
         public int degreesToTurn;
         public int varBitID;
         public int sessionSettingID;
+    }
+    public class ObjectConfig
+    {
+        public string name;
+        public bool hasActions = false;
+        public string[] actions;
+        public int type;
+        public int configID = -1;
+        public int configId_1 = -1;
+        public int offsetX = 0;
+        public int offsetY = 0;
+        public int offsetH = 0;
+        public int modelSizeX = 128;
+        public int modelSizeY = 128;
+        public int modelSizeH = 128;
+        public int sizeX = 1;
+        public int sizeY = 1;
+        public int mapFunctionID = -1;
+        public int mapSceneID = -1;
+        public int[] configObjectIDs;
+        public bool isUnwalkable = true;
+        public bool adjustToTerrain = false;
+        public bool isSolidObject = false;
+        public int[] types;
+        public string description;
+        public int animationID = -1;
+        public int[] objectModelIDs;
+        public int[] originalModelColors;
+        public int[] modifiedModelColors;
+        public bool nonFlatShading = false;
+        public byte brightness = 0;
+        public byte contrast = 0;
+        public bool aBoolean736 = false;
+        public int anInt768 = 0;
+        public int anInt775 = 16;
+        public bool aBoolean779 = true;
+        public bool aBoolean764 = false;
+        public int anInt760 = -1;
+        public bool aBoolean757 = true;
+        public bool aBoolean751 = false;
     }
 }
